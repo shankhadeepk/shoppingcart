@@ -3,6 +3,8 @@ package com.shoppingcartdemo.shoppingcart.model;
 import com.shoppingcartdemo.shoppingcart.exceptions.ShoppingCartException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +15,9 @@ import java.util.Set;
 * */
 @Component
 public class ShoppingCart {
+
+    @Resource
+    public HashMap<String,Long> stock;
 
     //Set is used so no one type of item added multiple times
     private Set<Item> items;
@@ -29,11 +34,17 @@ public class ShoppingCart {
 
     public void addItemsToCart(Item item) throws ShoppingCartException {
         if(item!=null) {
-            if (this.items == null) {
-                this.items = new HashSet<>();
-                this.items.add(item);
+            if (stock.get(item.getName()) > item.getQuantity()) {
+                if (this.items == null) {
+                    this.items = new HashSet<>();
+                    this.items.add(item);
+                    stock.put(item.getName(),(stock.get(item.getName()) - item.getQuantity()));
+                } else {
+                    stock.put(item.getName(),(stock.get(item.getName()) - item.getQuantity()));
+                    this.items.add(item);
+                }
             } else {
-                this.items.add(item);
+                throw new ShoppingCartException("Stock is not present");
             }
         }else {
             throw new ShoppingCartException("Item data does not exists");
@@ -45,6 +56,7 @@ public class ShoppingCart {
             if (this.items == null) {
                 throw new ShoppingCartException("The cart is empty");
             } else {
+                stock.put(item.getName(),(stock.get(item.getName()) + item.getQuantity()));
                 this.items.remove(item);
             }
         }else {
@@ -74,5 +86,9 @@ public class ShoppingCart {
         }else {
             throw new ShoppingCartException("Tax on cart cannot be negative");
         }
+    }
+
+    public void addItemsToStock(String itemName,Long quantity){
+        stock.put(itemName,quantity);
     }
 }

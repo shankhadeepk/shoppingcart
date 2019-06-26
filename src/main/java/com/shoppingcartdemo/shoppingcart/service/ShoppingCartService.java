@@ -13,4 +13,5 @@ public interface ShoppingCartService {
     public void updateShoppingCartDiscount(double discount) throws ShoppingCartException;
     public void updateShoppingCartTax(double tax) throws ShoppingCartException;
     public void clearCart();
+    public void addItemsToStock(String itemName,Long quantity);
 }

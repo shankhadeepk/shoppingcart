@@ -37,6 +37,11 @@ public class ShoppingCartServiceI implements ShoppingCartService {
     }
 
     @Override
+    public void addItemsToStock(String itemName, Long quantity) {
+        shoppingCart.addItemsToStock(itemName,quantity);
+    }
+
+    @Override
     public Set<Item> addItemsToCart(Item item) throws ShoppingCartException {
         shoppingCart.addItemsToCart(item);
         System.out.println("Items added");
